@@ -1,0 +1,41 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+
+  - name: Install updates - (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks:
+    - name: Create Folder1
+      file:
+        path: /home/avishaih/folder1
+        state: directory
+        owner: avishaih
+        group: avishaih
+        mode: '0755'
+
+    - name: Create Folder2
+      file:
+        path: /home/avishaih/folder2
+        state: directory
+        owner: avishaih
+        group: avishaih
+        mode: '0755'
+
+- hosts: db_servers
+  become: true
+  tasks:
+  
+  - name: Install MariaDB package (CentOS)
+    yum:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "CentOS"

@@ -1,0 +1,14 @@
+---
+
+- hosts: web_servers
+  become: true
+  tasks:
+    - name: Remove Folder1
+      file:
+        path: /home/avishaih/folder1
+        state: absent
+
+    - name: Remove Folder2
+      file:
+        path: /home/avishaih/folder2
+        state: absent 
