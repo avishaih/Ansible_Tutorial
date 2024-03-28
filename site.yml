@@ -6,6 +6,7 @@
 
 
   - name: Install updates - (Ubuntu)
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
@@ -15,6 +16,7 @@
   become: true
   tasks:
     - name: Create Folder1
+      tags: folders
       file:
         path: /home/avishaih/folder1
         state: directory
@@ -23,6 +25,7 @@
         mode: '0755'
 
     - name: Create Folder2
+      tags: folders
       file:
         path: /home/avishaih/folder2
         state: directory
@@ -35,6 +38,7 @@
   tasks:
   
   - name: Install MariaDB package (CentOS)
+    tags: centos,db,mariadb
     yum:
       name: mariadb-server
       state: latest
