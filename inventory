@@ -5,3 +5,5 @@
 [db_servers]
 172.24.47.121
 
+[workstations]
+172.24.40.68
