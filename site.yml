@@ -5,109 +5,43 @@
   pre_tasks:
 
 
-  - name: Install updates - (Ubuntu)
+  - name: update repository index - (Ubuntu)
     tags: always
     apt:
       update_cache: yes
     changed_when: false
     when: ansible_distribution == "Ubuntu"
 
-  - name: Install updates - (CentOS)
+  - name: update repository index - (CentOS)
     tags: always
     dnf:
       update_cache: yes
     changed_when: false
     when: ansible_distribution == "CentOS"
 
-- hosts: workstations
-  become: true
-  tasks:
-
-  - name:
-    package:
-      name: unzip
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip 
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: avishaih
-      group: avishaih
-
-- hosts: web_servers
-  become: true
-  tasks:
-    - name: Create Folder1
-      tags: folders
-      file:
-        path: /home/avishaih/folder1
-        state: directory
-        owner: avishaih
-        group: avishaih
-        mode: '0755'
-
-    - name: Create Folder2
-      tags: folders
-      file:
-        path: /home/avishaih/folder2
-        state: directory
-        owner: avishaih
-        group: avishaih
-        mode: '0755'
-    
-    - name: copy default html file for site
-      tags: apache,apache2,httpd
-      copy:
-        src: default_site.html
-        dest: /var/www/html/index.html
-        owner: avishaih
-        group: avishaih
-        mode: 0644
-         
-
-- hosts: db_servers
-  become: true
-  tasks:
-  
-  - name: Install MariaDB package (CentOS)
-    tags: centos,db,mariadb
-    yum:
-      name: mariadb-server
-      state: latest
-    when: ansible_distribution == "CentOS"
-
-  - name: Start httpd (CentOS)
-    tags: apache,centos,httpd
-    service:
-      name: httpd
-      state: started
-      enabled: yes
-    when: ansible_distribution == "CentOS"
-
-  - name: Change E-mail address for admin
-    tags: apache,centos,httpd
-    lineinfile:
-      path: /etc/httpd/conf/httpd.conf
-      regex: '^ServerAdmin'
-      line: ServerAdmin avishaih@boltinc.net
-    when: ansible_distribution == "CentOS"
-    register: httpd
-
-  - name: Restart httpd (CentOS)
-    tags: apache,centos,httpd
-    service:
-      name: httpd
-      state: restarted
-    when: httpd.changed
-
-
 - hosts: all
   become: true
-  tasks:
+  roles:
+    - base
 
-  - name: add ssh key for simone
-    tags: always
-    authorized_key:
-      user: simone
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPi6YqHRZUV0bgLpfVndM1eUN+DashsqUcXaKvkNeo4 ansible"
+- hosts: workstations         
+  become: true
+  roles:
+    - workstations
+
+- hosts: web_servers         
+  become: true
+  roles:
+    - web_servers
+
+- hosts: db_servers    
+  become: true
+  roles:
+    - db_servers
+
+
+- hosts: file_servers         
+  become: true
+  roles:
+    - file_servers
+
